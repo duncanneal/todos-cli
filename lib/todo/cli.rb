@@ -40,8 +40,31 @@ module Todo
     def self.done(item_id)
       item = Item.find(item_id)
       item.complete!
-      puts "Task: #{item.task} is done...Bam!"
+      puts "Task: #{item.task} is done... Bam!!"
     end
+
+    def self.next_item
+     random_item = Item.order("RANDOM()").first
+     puts random_item.task
+   end
+ 
+    def self.search(string)
+      items = Item.where('task LIKE ?', '%' + string + '%')
+
+    unless items.empty?
+      puts "#{items.count} Matches.\n----------"
+
+      items.each do |item|
+        done = item.is_complete ? '√' : ' '
+        puts "[#{done}] #{item.id} #{item.task}"
+      end
+    else
+      puts "There were no matches."
+    end
+      puts ''
+  end
+
+
 
     def self.run
       case ARGV[0]
@@ -52,7 +75,13 @@ module Todo
           list(ARGV[1])
 
         when "done"
-          done(ARGV[1])    
+          done(ARGV[1]) 
+
+        when "next"
+          next_item() 
+
+        when "search"  
+           search(ARGV[1]) 
         end
       end
     end
